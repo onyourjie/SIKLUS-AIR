@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualisasi Siklus Air - Three.js</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="canvas-container"></div>
+    
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <h3>🌊 Memuat Simulasi...</h3>
+        <div class="loader"></div>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-panel">
+        <h2>🌊 Siklus Air</h2>
+        <div class="phase-info" id="phaseInfo">
+            <h3>Mulai Simulasi</h3>
+            <p>Klik tombol "Mulai Animasi" untuk melihat proses siklus air yang menakjubkan!</p>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <!-- Statistics Panel -->
+    <div class="stats-panel">
+        <div class="stat-item">
+            <span class="stat-label">💧 Partikel Uap:</span>
+            <span class="stat-value" id="vaporCount">0</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">☁️ Partikel Awan:</span>
+            <span class="stat-value" id="cloudCount">0</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">🌧️ Tetes Hujan:</span>
+            <span class="stat-value" id="rainCount">0</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">🔄 Siklus Selesai:</span>
+            <span class="stat-value" id="cycleCount">0</span>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+        <h3>Legenda</h3>
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(135deg, #006994, #0077BE);"></div>
+            <span>Laut / Samudra</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(135deg, #87CEEB, #B0E0E6);"></div>
+            <span>Uap Air</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(135deg, #FFFFFF, #E8E8E8);"></div>
+            <span>Awan</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(135deg, #4169E1, #1E90FF);"></div>
+            <span>Hujan</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(135deg, #228B22, #32CD32);"></div>
+            <span>Vegetasi</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(135deg, #8B4513, #A0522D);"></div>
+            <span>Tanah</span>
+        </div>
+    </div>
+
+    <!-- Help Panel -->
+    <div class="help-panel">
+        <h4>Kontrol Kamera</h4>
+        <div class="help-item">
+            <span class="help-desc">Rotasi</span>
+            <span class="help-key">Drag</span>
+        </div>
+        <div class="help-item">
+            <span class="help-desc">Zoom</span>
+            <span class="help-key">Scroll</span>
+        </div>
+        <div class="help-item">
+            <span class="help-desc">Pan</span>
+            <span class="help-key">Right Click</span>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="btn btn-primary" id="startBtn">
+            <span>▶</span> Mulai Animasi
+        </button>
+        <button class="btn btn-secondary" id="resetBtn">
+            <span>↻</span> Reset
+        </button>
+        <button class="btn btn-success" id="viewBtn">
+            Ubah View
+        </button>
+        <button class="btn btn-primary" id="quizBtn" style="background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%); box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4);">
+            <span>🎓</span> Kuis
+        </button>
+        <div class="speed-control">
+            <label>⚡ Kecepatan:</label>
+            <input type="range" id="speedSlider" min="0.5" max="3" step="0.5" value="1">
+            <span id="speedValue">1x</span>
+        </div>
+    </div>
+
+    <!-- Sound Control -->
+    <div class="sound-control" id="soundControl">
+        <button class="sound-btn" id="soundToggle" title="Aktifkan/Matikan Suara">
+            <span>🔊</span>
+        </button>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- Quiz Modal -->
+    <div class="quiz-modal" id="quizModal">
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <h2>🎓 Kuis Siklus Air</h2>
+                <button class="quiz-close" id="quizClose">&times;</button>
+            </div>
+            
+            <div class="quiz-content" id="quizContent">
+                <!-- Quiz questions will be dynamically generated -->
+            </div>
+
+            <div class="quiz-footer">
+                <div class="quiz-score" id="quizScore"></div>
+                <button class="btn btn-primary" id="quizSubmit">Kirim Jawaban</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Result Modal -->
+    <div class="quiz-result-modal" id="quizResultModal">
+        <div class="result-container">
+            <div class="result-header">
+                <h2 id="resultTitle">Hasil Kuis</h2>
+            </div>
+            
+            <div class="result-content" id="resultContent">
+                <!-- Results will be displayed here -->
+            </div>
+
+            <div class="result-footer">
+                <button class="btn btn-success" id="resultRetry">Coba Lagi</button>
+                <button class="btn btn-primary" id="resultClose">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden audio elements for narration -->
+    <audio id="narrationEvaporation" preload="auto">
+        <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
+    </audio>
+    <audio id="narrationCondensation" preload="auto">
+        <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
+    </audio>
+    <audio id="narrationPrecipitation" preload="auto">
+        <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
+    </audio>
+    <audio id="soundRain" preload="auto">
+        <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
+    </audio>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
