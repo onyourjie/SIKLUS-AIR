@@ -27,50 +27,31 @@
         </div>
     </div>
 
-    <!-- Statistics Panel -->
-    <div class="stats-panel">
-        <div class="stat-item">
-            <span class="stat-label">💧 Partikel Uap:</span>
-            <span class="stat-value" id="vaporCount">0</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-label">☁️ Partikel Awan:</span>
-            <span class="stat-value" id="cloudCount">0</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-label">🌧️ Tetes Hujan:</span>
-            <span class="stat-value" id="rainCount">0</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-label">🔄 Siklus Selesai:</span>
-            <span class="stat-value" id="cycleCount">0</span>
-        </div>
-    </div>
-
     <!-- Legend -->
     <div class="legend">
         <h3>Legenda</h3>
-        <div class="legend-item">
+        <p class="legend-hint">💡 Klik untuk melihat di simulasi</p>
+        <div class="legend-item" data-type="ocean">
             <div class="legend-color" style="background: linear-gradient(135deg, #006994, #0077BE);"></div>
             <span>Laut / Samudra</span>
         </div>
-        <div class="legend-item">
+        <div class="legend-item" data-type="vapor">
             <div class="legend-color" style="background: linear-gradient(135deg, #87CEEB, #B0E0E6);"></div>
             <span>Uap Air</span>
         </div>
-        <div class="legend-item">
+        <div class="legend-item" data-type="cloud">
             <div class="legend-color" style="background: linear-gradient(135deg, #FFFFFF, #E8E8E8);"></div>
             <span>Awan</span>
         </div>
-        <div class="legend-item">
+        <div class="legend-item" data-type="rain">
             <div class="legend-color" style="background: linear-gradient(135deg, #4169E1, #1E90FF);"></div>
             <span>Hujan</span>
         </div>
-        <div class="legend-item">
+        <div class="legend-item" data-type="vegetation">
             <div class="legend-color" style="background: linear-gradient(135deg, #228B22, #32CD32);"></div>
             <span>Vegetasi</span>
         </div>
-        <div class="legend-item">
+        <div class="legend-item" data-type="ground">
             <div class="legend-color" style="background: linear-gradient(135deg, #8B4513, #A0522D);"></div>
             <span>Tanah</span>
         </div>
@@ -90,6 +71,14 @@
         <div class="help-item">
             <span class="help-desc">Pan</span>
             <span class="help-key">Right Click</span>
+        </div>
+        <div class="help-item">
+            <span class="help-desc">Highlight</span>
+            <span class="help-key">Klik Legenda</span>
+        </div>
+        <div class="help-item">
+            <span class="help-desc">Clear</span>
+            <span class="help-key">Double Click</span>
         </div>
     </div>
 

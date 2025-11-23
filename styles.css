@@ -305,9 +305,16 @@ body {
 
 .legend h3 {
     color: #2196F3;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     font-size: 20px;
     font-weight: 700;
+}
+
+.legend-hint {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 15px;
+    font-style: italic;
 }
 
 .legend-item {
@@ -316,14 +323,24 @@ body {
     gap: 12px;
     margin-bottom: 12px;
     font-size: 14px;
-    transition: transform 0.2s ease;
+    transition: all 0.3s ease;
     padding: 8px;
     border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
 }
 
 .legend-item:hover {
-    transform: translateX(5px);
-    background: rgba(33, 150, 243, 0.05);
+    transform: translateX(5px) scale(1.05);
+    background: rgba(33, 150, 243, 0.1);
+    border-color: rgba(33, 150, 243, 0.3);
+}
+
+.legend-item.active {
+    background: rgba(33, 150, 243, 0.2);
+    border-color: #2196F3;
+    transform: translateX(8px) scale(1.08);
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
 }
 
 .legend-color {
@@ -331,6 +348,12 @@ body {
     height: 25px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.legend-item.active .legend-color {
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.6);
+    transform: scale(1.1);
 }
 
 /* Camera Controls Help */
