@@ -27,8 +27,6 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 controls.minDistance = 15;
 controls.maxDistance = 60;
-// Hilangkan batasan sudut agar bisa lihat dari bawah
-// controls.maxPolarAngle = Math.PI / 2 + 0.3; // DIHAPUS
 controls.autoRotate = false;
 controls.autoRotateSpeed = 0.5;
 
@@ -88,36 +86,35 @@ scene.add(sunRay);
 
 // ============================================
 // ============================================
-// OCEAN - Laut dengan warna biru cerah sesuai legenda
+// OCEAN
 // ============================================
 const oceanGeometry = new THREE.BoxGeometry(50, 0.5, 30, 50, 1, 30);
 const oceanMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x1E90FF, // Warna biru cerah (Dodger Blue)
+    color: 0x1E90FF, 
     roughness: 0.2,
     metalness: 0.8,
-    emissive: 0x0077BE, // Emissive sesuai legenda
+    emissive: 0x0077BE, 
     emissiveIntensity: 0.3
 });
 const ocean = new THREE.Mesh(oceanGeometry, oceanMaterial);
-ocean.position.y = -5.25;
-ocean.position.z = -5;
+ocean.position.y = -3.5; 
+ocean.position.z = -10; 
 ocean.receiveShadow = true;
 ocean.castShadow = true;
 ocean.name = 'ocean';
 scene.add(ocean);
 
-// Store original positions for wave animation
+
 const oceanPositions = oceanGeometry.attributes.position.array.slice();
 
-// Tanah 3D (BoxGeometry) agar terlihat dari semua sudut
-const groundGeometry = new THREE.BoxGeometry(50, 2, 30); // width, height (thickness), depth
+const groundGeometry = new THREE.BoxGeometry(60, 2, 40);
 const groundMaterial = new THREE.MeshStandardMaterial({ 
     color: 0x8B4513,
     roughness: 0.9,
     metalness: 0.1
 });
 const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-ground.position.y = -6; // Turunkan sedikit karena sekarang ada ketebalan
+ground.position.y = -6;
 ground.position.z = 10;
 ground.receiveShadow = true;
 ground.castShadow = true;
@@ -169,7 +166,7 @@ function createTree(x, z) {
     // Leaves
     const leavesGeometry = new THREE.ConeGeometry(1, 2, 8);
     const leavesMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
-    
+    const oceanGeometry = new THREE.PlaneGeometry(60, 40, 80, 40); 
     const leaves1 = new THREE.Mesh(leavesGeometry, leavesMaterial);
     leaves1.position.y = 2.5;
     leaves1.castShadow = true;
@@ -178,7 +175,7 @@ function createTree(x, z) {
     const leaves2 = new THREE.Mesh(leavesGeometry, leavesMaterial);
     leaves2.position.y = 3.2;
     leaves2.scale.set(0.8, 0.8, 0.8);
-    leaves2.castShadow = true;
+    ocean.position.y = -6.01; 
     tree.add(leaves2);
     
     tree.position.set(x, -5, z);
@@ -229,7 +226,6 @@ function createVaporParticle() {
     });
     const particle = new THREE.Mesh(geometry, material);
     
-    // Random position di atas laut - HIDDEN di awal
     particle.position.set(
         (Math.random() - 0.5) * 20,
         Math.random() * 10 - 2,
@@ -240,13 +236,11 @@ function createVaporParticle() {
     particle.userData.wobble = Math.random() * Math.PI * 2;
     particle.userData.active = false;
     particle.userData.targetY = 6 + Math.random() * 4;
-    particle.visible = false; // HIDDEN di awal
+    particle.visible = false; 
     
     vaporGroup.add(particle);
     vaporParticles.push(particle);
 }
-
-// Create more vapor particles
 for (let i = 0; i < 100; i++) {
     createVaporParticle();
 }
@@ -315,7 +309,7 @@ function createRainParticle() {
     );
     particle.userData.speed = 0.25 + Math.random() * 0.15;
     particle.userData.active = false;
-    particle.visible = false; // HIDDEN di awal
+    particle.visible = false; 
     rainGroup.add(particle);
     rainParticles.push(particle);
 }
@@ -324,18 +318,17 @@ for (let i = 0; i < 200; i++) {
     createRainParticle();
 }
 
-// SPLASH EFFECTS - DIHAPUS (tidak perlu lingkaran di air)
 
 camera.position.set(0, 8, 30);
 camera.lookAt(0, 0, 0);
 
 let currentView = 0;
 const cameraViews = [
-    { pos: [0, 8, 30], target: [0, 0, 0] },      // Default
-    { pos: [25, 12, 20], target: [0, 0, 0] },    // Side view
-    { pos: [0, 25, 15], target: [0, 0, 0] },     // Top view
-    { pos: [-20, 10, 10], target: [0, 0, 0] },   // Left view
-    { pos: [15, 5, 25], target: [0, 5, 0] }      // Close up
+    { pos: [0, 8, 30], target: [0, 0, 0] },      
+    { pos: [25, 12, 20], target: [0, 0, 0] },    
+    { pos: [0, 25, 15], target: [0, 0, 0] },    
+    { pos: [-20, 10, 10], target: [0, 0, 0] },   
+    { pos: [15, 5, 25], target: [0, 5, 0] }     
 ];
 
 let animationState = 'idle';
@@ -442,7 +435,6 @@ function updatePhaseInfo(phase) {
 
 // Update statistics display
 function updateStats() {
-    // Check if elements exist (stats panel might be removed)
     const vaporEl = document.getElementById('vaporCount');
     const cloudEl = document.getElementById('cloudCount');
     const rainEl = document.getElementById('rainCount');
@@ -486,10 +478,10 @@ function animateEvaporation() {
         
         if (animationProgress > delay && !particle.userData.active) {
             particle.userData.active = true;
-            particle.visible = true; // TAMPILKAN partikel
+            particle.visible = true; 
         }
         
-        if (particle.userData.active && particle.visible) { // Cek visible juga
+        if (particle.userData.active && particle.visible) { 
             // Fade in
             if (particle.material.opacity < 0.7) {
                 particle.material.opacity += 0.02 * animationSpeed;
@@ -507,7 +499,6 @@ function animateEvaporation() {
             
             activeCount++;
             
-            // Reset when reached target height - LOOP selama masih evaporasi/kondensasi
             if (particle.position.y > particle.userData.targetY) {
                 particle.position.y = -4.5;
                 particle.position.x = (Math.random() - 0.5) * 20;
@@ -558,7 +549,7 @@ function animatePrecipitation() {
         
         if (animationProgress > delay && !particle.userData.active) {
             particle.userData.active = true;
-            particle.visible = true; // TAMPILKAN hujan
+            particle.visible = true; 
             
             // Position near clouds
             const cloudPos = clouds[Math.floor(Math.random() * clouds.length)].position;
@@ -577,7 +568,7 @@ function animatePrecipitation() {
             
             // Fall down
             particle.position.y -= particle.userData.speed * animationSpeed;
-            particle.position.x += (Math.random() - 0.5) * 0.05; // Wind effect
+            particle.position.x += (Math.random() - 0.5) * 0.05; 
             
             activeCount++;
             
@@ -601,10 +592,10 @@ function animatePrecipitation() {
 // Lightning effect function
 function createLightningEffect() {
     // Buat flash cahaya
-    const duration = 200; // milliseconds
+    const duration = 200; 
     const originalIntensity = ambientLight.intensity;
     
-    // Flash bright
+   
     ambientLight.intensity = 1.5;
     sunLight.intensity = 2;
     
@@ -695,28 +686,23 @@ function resetAnimation() {
     soundManager.stopRain();
 }
 
-// Idle animation 
 function animateIdleParticles() {
     const time = Date.now() * 0.001;
     
-    // Animate vapor 
     vaporParticles.forEach((particle, i) => {
-        if (!particle.visible) return; // Skip jika hidden
+        if (!particle.visible) return; 
         particle.position.y += Math.sin(time + i) * 0.002;
         particle.position.x += Math.cos(time * 0.5 + i) * 0.003;
         
-        // Keep in bounds
         if (particle.position.y > 8) particle.position.y = -2;
         if (particle.position.y < -3) particle.position.y = 8;
     });
     
-    // Animate clouds 
     clouds.forEach((cloud, i) => {
-        if (!cloud.visible) return; // Skip jika hidden
+        if (!cloud.visible) return; 
         cloud.position.x += Math.sin(time * 0.1 + i) * 0.01;
         cloud.position.z += Math.cos(time * 0.1 + i) * 0.005;
         
-        // Gentle rotation
         cloud.rotation.y += 0.0002;
         
         // Keep in bounds
@@ -726,7 +712,7 @@ function animateIdleParticles() {
     
     // Animate rain 
     rainParticles.forEach((particle, i) => {
-        if (!particle.visible) return; // Skip jika hidden
+        if (!particle.visible) return; 
         particle.position.y -= 0.2;
         particle.position.x += Math.sin(time + i) * 0.01;
         
@@ -802,10 +788,8 @@ function animate() {
     // Update controls
     controls.update();
 
-    // Always animate environment
     animateOceanWaves();
     animateRiverFlow();
-    // animateSplashes(); - DIHAPUS
     
     // Sun rotation
     sun.rotation.y += 0.001;
@@ -821,7 +805,6 @@ function animate() {
         animateIdleParticles();
     }
     
-    // LIVE animation ketika highlight aktif
     if (currentHighlight) {
         animateLiveHighlight();
     }
@@ -842,8 +825,8 @@ function animate() {
             }
         } 
         else if (animationState === 'condensation') {
-            animateEvaporation(); // Continue vapor naik (tapi akan berhenti saat ke precipitation)
-            animateCondensation(); // Awan terbentuk
+            animateEvaporation(); 
+            animateCondensation(); 
             updateProgress('condensation');
             
             if (animationProgress > 150 / animationSpeed) {
@@ -852,12 +835,10 @@ function animate() {
                 updatePhaseInfo('precipitation');
                 playSound('narrationCondensation');
                 
-                // SEMBUNYIKAN uap air saat mulai hujan
                 vaporParticles.forEach(p => {
                     p.visible = false;
                     p.userData.active = false;
                     p.material.opacity = 0;
-                    // Reset posisi agar nanti mulai dari bawah lagi
                     p.position.y = -4.5;
                 });
             }
@@ -1001,7 +982,6 @@ class SoundManager {
         const buffer = this.audioContext.createBuffer(1, sampleRate * duration, sampleRate);
         const output = buffer.getChannelData(0);
         
-        // Generate thunder sound (low frequency noise with decay)
         for (let i = 0; i < buffer.length; i++) {
             const t = i / sampleRate;
             const envelope = Math.exp(-t * 2); // Exponential decay
@@ -1090,7 +1070,6 @@ class SoundManager {
     }
 
     playThunder() {
-        // Trigger lightning effect along with sound
         createLightningEffect();
         this.playSound('thunder', 0.5, false);
     }
@@ -1293,7 +1272,7 @@ document.getElementById('viewBtn').addEventListener('click', () => {
     function animateCamera() {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3); // Ease out cubic
+        const eased = 1 - Math.pow(1 - progress, 3); 
         
         camera.position.lerpVectors(startPos, endPos, eased);
         controls.target.set(...view.target);
@@ -1390,14 +1369,12 @@ function storeOriginalMaterial(object) {
     }
 }
 
-// Highlight object dengan efek glow + HIDE yang lain + LIVE SIMULATION
 function highlightObject(type) {
     // Clear previous highlight
     clearHighlight();
     
     currentHighlight = type;
-    
-    // Visual feedback pada legend item
+
     document.querySelectorAll('.legend-item').forEach(item => {
         item.classList.remove('active');
     });
@@ -1405,11 +1382,15 @@ function highlightObject(type) {
     
     hideAllParticles();
     
-    // TAMPILKAN & Highlight hanya objects yang dipilih dengan LIVE SIMULATION
     switch(type) {
         case 'ocean':
-            highlightMesh(ocean, 0x00BFFF, 1.5);
-            focusCamera(ocean.position, 20);
+            activateRainSimulation();
+            focusCamera(new THREE.Vector3(0, 5, 0), 25);
+            
+            animationState = 'precipitation';
+            animationProgress = 0;
+            isAnimating = true;
+            updatePhaseInfo('precipitation');
             break;
             
         case 'vapor':
@@ -1448,7 +1429,6 @@ function highlightObject(type) {
     }
 }
 
-// Activate LIVE vapor simulation
 function activateVaporSimulation() {
     vaporParticles.forEach((particle, i) => {
         particle.visible = true;
@@ -1487,35 +1467,30 @@ function activateRainSimulation() {
     });
 }
 
-// Sembunyikan semua partikel
 function hideAllParticles() {
     vaporParticles.forEach(p => p.visible = false);
     clouds.forEach(c => c.visible = false);
     rainParticles.forEach(p => p.visible = false);
 }
 
-// Tampilkan semua partikel
 function showAllParticles() {
     vaporParticles.forEach(p => p.visible = true);
     clouds.forEach(c => c.visible = true);
     rainParticles.forEach(p => p.visible = true);
 }
 
-// Tampilkan HANYA uap air
 function showOnlyVapor() {
     vaporParticles.forEach(p => p.visible = true);
     clouds.forEach(c => c.visible = false);
     rainParticles.forEach(p => p.visible = false);
 }
 
-// Tampilkan HANYA awan
 function showOnlyClouds() {
     vaporParticles.forEach(p => p.visible = false);
     clouds.forEach(c => c.visible = true);
     rainParticles.forEach(p => p.visible = false);
 }
 
-// Tampilkan HANYA hujan
 function showOnlyRain() {
     vaporParticles.forEach(p => p.visible = false);
     clouds.forEach(c => c.visible = false);
@@ -1569,8 +1544,7 @@ function clearHighlight() {
             object.material = originalMaterials.get(object.uuid).clone();
         }
     });
-    
-    // TAMPILKAN KEMBALI SEMUA PARTIKEL
+
     showAllParticles();
     
     currentHighlight = null;
@@ -1610,23 +1584,18 @@ function focusCamera(targetPos, distance) {
     
     animateFocus();
 }
-
-// Setup legend click handlers
 document.querySelectorAll('.legend-item').forEach(item => {
     item.addEventListener('click', () => {
         const type = item.getAttribute('data-type');
         
         if (currentHighlight === type) {
-            // Toggle off if clicking same item
             clearHighlight();
         } else {
-            // Highlight new item
             highlightObject(type);
         }
     });
 });
 
-// Click outside to clear highlight
 renderer.domElement.addEventListener('dblclick', () => {
     if (currentHighlight) {
         clearHighlight();
@@ -1637,20 +1606,16 @@ renderer.domElement.addEventListener('dblclick', () => {
 // INITIALIZATION
 // ============================================
 
-// Remove loading screen
 setTimeout(() => {
     document.getElementById('loading').style.display = 'none';
 }, 1000);
 
-// Initial setup
 updatePhaseInfo('evaporation');
 updateStats();
 updateProgress('idle');
 
-// Initialize sound system
 soundManager.init();
 
-// Start animation loop
 animate();
 
 console.log('🌊 Simulasi Siklus Air - Ready!');
